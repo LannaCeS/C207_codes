@@ -10,7 +10,7 @@ public class Connection {
 
     String database = "lojadedoces";//nome do BD
     String user = "root";
-    String password = "L2025";
+    String password = "*****"; //inserir a senha ao utilizar
     String url = "jdbc:mysql://localhost:3306/" + database + "?useTimezone=true&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true";
 
 
