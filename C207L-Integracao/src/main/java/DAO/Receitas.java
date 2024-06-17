@@ -32,7 +32,7 @@ public class Receitas extends Connection{
             pst.execute();
             sucesso = true;
         } catch (SQLException exc) {
-            System.out.println("Erro: " + exc.getMessage());
+            //System.out.println("Erro: " + exc.getMessage()); -> receita duplicada, desnecessário avisar
             sucesso = false;
         } finally {
             try {

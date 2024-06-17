@@ -23,7 +23,7 @@ public class Doces extends Connection{
             pst.execute();
             sucesso = true;
         } catch (SQLException exc) {
-            System.out.println("Erro: " + exc.getMessage());
+            //System.out.println("Erro: " + exc.getMessage());
             sucesso = false;
         } finally {
             try {
@@ -37,15 +37,14 @@ public class Doces extends Connection{
     }
 
     //UPDATE
-    public boolean updateDoces(String newNomeDoce, String newReceita, String nomeDoce) {
+    public boolean updateDoces(String NomeDoce, int Quantidade, int quantidadeAnterior) {
         connectToDB();
-        String sql = "UPDATE doces SET NomeDoce=?, Receitas_NomeReceita = ? where NomeDoce = ?";
+        String sql = "UPDATE doces SET Quantidade = ? - ? where NomeDoce = ?";
         try {
             pst = con.prepareStatement(sql);
-            pst.setString(1, newNomeDoce);
-            //pst.setString(2, nomeDoce);
-            pst.setString(2, newReceita);
-            pst.setString(3, nomeDoce);
+            pst.setInt(1, quantidadeAnterior);
+            pst.setInt(2, Quantidade);
+            pst.setString(3, NomeDoce);
             pst.execute();
             sucesso = true;
         } catch (SQLException ex) {
@@ -63,13 +62,13 @@ public class Doces extends Connection{
     }
 
     //DELETE
-    public boolean deleteDoces(String nomeDoce) {
+    public boolean deleteDoces(String nomeDoce, String receita) {
         connectToDB();
-        String sql = "DELETE FROM doces where NomeDoce=?";
+        String sql = "DELETE FROM doces where NomeDoce=? AND Receitas_NomeReceita = ?";
         try {
             pst = con.prepareStatement(sql);
             pst.setString(1, nomeDoce);
-            //pst.setInt(1, quantidade);
+            pst.setString(2, receita);
             pst.execute();
             sucesso = true;
         } catch (SQLException ex) {
@@ -123,4 +122,136 @@ public class Doces extends Connection{
         }
         return docesM;
     }
+
+    public boolean verificarQuantidade(int quant, String sweet) {
+        connectToDB();
+        String sql = "SELECT quantidade FROM doces WHERE NomeDoce = ?";
+        boolean autorizado = false;
+
+        try {
+            pst = con.prepareStatement(sql);
+            pst.setString(1, sweet);
+            rs = pst.executeQuery();
+
+            while (rs.next()) {
+                if(quant <= rs.getInt("Quantidade")){
+                    autorizado = true;
+                }else{
+                    autorizado = false;
+                }
+            }
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                con.close();
+                pst.close();
+                rs.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+        return autorizado;
+    }
+
+    public int selectQuantidade(String sweet) {
+        connectToDB();
+        String sql = "SELECT quantidade FROM doces WHERE NomeDoce = ?";
+        int quantity = 0;
+
+        try {
+            pst = con.prepareStatement(sql);
+            pst.setString(1, sweet);
+            rs = pst.executeQuery();
+
+            while (rs.next()) {
+                quantity = rs.getInt("Quantidade");
+            }
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                con.close();
+                pst.close();
+                rs.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+        return quantity;
+    }
+
+    public void disableForeignKey() {
+        connectToDB();
+        String dropForeignKeySQL = "ALTER TABLE pedidos_has_doces DROP FOREIGN KEY pedidos_has_doces_ibfk_2 ";
+
+        try {
+            st = con.createStatement();
+            st.executeUpdate(dropForeignKeySQL);
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                st.close();
+                con.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+    }
+
+
+    public void truncateDoces() {
+        connectToDB();
+        String truncateTableSQL = "TRUNCATE TABLE doces";
+
+        try {
+            st = con.createStatement();
+            st.executeUpdate(truncateTableSQL);
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                st.close();
+                con.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+    }
+
+    public void enableForeignKey() {
+        connectToDB();
+        String addForeignKeySQL = "ALTER TABLE pedidos_has_doces " +
+                "ADD CONSTRAINT fk_Pedidos_has_Doces_Doces1 " +
+                "FOREIGN KEY (Doces_NomeDoce, Doces_Receitas_NomeReceita) " +
+                "REFERENCES doces (NomeDoce, Receitas_NomeReceita)";
+
+        try {
+            st = con.createStatement();
+            st.executeUpdate(addForeignKeySQL);
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                st.close();
+                con.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+    }
+
+
+
 }

@@ -17,6 +17,7 @@ public class ReceitasModel {
         this.chantilly = chantilly;
     }
 
+    public ReceitasModel(){}
 
     public String getNomeReceita() {
         return this.nomeReceita;

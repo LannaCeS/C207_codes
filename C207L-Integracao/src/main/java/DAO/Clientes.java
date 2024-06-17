@@ -123,4 +123,66 @@ public class Clientes extends Connection{
         }
         return clientesM;
     }
+
+    public Boolean selectCPF(String CPF) {
+        connectToDB();
+        String sql = "SELECT nomecliente FROM clientes WHERE CPF =?";
+        boolean exists = false;
+
+        try {
+            pst = con.prepareStatement(sql);
+            pst.setString(1, CPF);
+            rs = pst.executeQuery();
+
+            if(rs.next()){
+                exists = true;
+            }else{
+                exists = false;
+            }
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                rs.close();
+                pst.close();
+                con.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+        return exists;
+    }
+
+    public String selectEndereco(String CPF) {
+        connectToDB();
+        String sql = "SELECT Endereços_Endereco FROM clientes WHERE CPF = ?";
+        String endereco ="";
+
+        try {
+            pst = con.prepareStatement(sql);
+            pst.setString(1, CPF);
+            rs = pst.executeQuery();
+
+            if(rs.next()){
+                endereco = rs.getString("Endereços_Endereco");
+            }else{
+                endereco = "Sem endereco";
+            }
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                con.close();
+                pst.close();
+                rs.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
+        return endereco;
+    }
 }

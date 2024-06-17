@@ -15,7 +15,7 @@ public class Pedidos_has_Doces extends Connection {
 
         connectToDB();
 
-        String sql = "INSERT INTO pedidos_has_doces (Pedidos_idPedido, Doces_nomeDoce, Doces_Receitas_NomeReceita) values(?,?,?)";
+        String sql = "INSERT INTO pedidos_has_doces (Pedidos_idPedidos, Doces_nomeDoce, Doces_Receitas_NomeReceita) values(?,?,?)";
         try {
             pst = con.prepareStatement(sql);
             pst.setInt(1,pedidosDocesModel.getPedidos_idPedidos());
@@ -41,7 +41,7 @@ public class Pedidos_has_Doces extends Connection {
     //UPDATE
     public boolean updatePedidosDoces(String newNomeDoce, String newNomeReceita, int id_Pedido) {
         connectToDB();
-        String sql = "UPDATE pedidos_has_doces SET Doces_NomeDoces, Doces_Receitas_NomeReceita=(?,?) where Pedidos_idPedido=?";
+        String sql = "UPDATE pedidos_has_doces SET Doces_NomeDoces, Doces_Receitas_NomeReceita=(?,?) where Pedidos_idPedidos=?";
         try {
             pst = con.prepareStatement(sql);
             pst.setString(1, newNomeDoce);
@@ -66,7 +66,7 @@ public class Pedidos_has_Doces extends Connection {
     //DELETE
     public boolean deletePedidosDoces(int id_pedidos) {
         connectToDB();
-        String sql = "DELETE FROM pedidos_has_doces where Pedidos_idPedido=?";
+        String sql = "DELETE FROM pedidos_has_doces where Pedidos_idPedidos=?";
         try {
             pst = con.prepareStatement(sql);
             pst.setInt(1, id_pedidos);
@@ -100,7 +100,7 @@ public class Pedidos_has_Doces extends Connection {
 
             while (rs.next()) {
 
-                PedidosDocesModel pedidosDocesMod = new PedidosDocesModel(rs.getInt("Pedidos_idPedido"), rs.getString("Doces_nomeDoce"), rs.getString("Doces_Receitas_NomeReceita"));
+                PedidosDocesModel pedidosDocesMod = new PedidosDocesModel(rs.getInt("Pedidos_idPedidos"), rs.getString("Doces_nomeDoce"), rs.getString("Doces_Receitas_NomeReceita"), rs.getInt("Doces_Quantidade"));
                 //Pedidos_idPedido, Doces_nomeDoce, Doces_Receitas_NomeReceita
                 System.out.println("Número do pedido = " + pedidosDocesMod.getPedidos_idPedidos());
                 System.out.println("Nome do doce = " + pedidosDocesMod.getDoces_nomeDoce());
@@ -122,5 +122,26 @@ public class Pedidos_has_Doces extends Connection {
             }
         }
         return pedidosDocesM;
+    }
+
+    public void truncatePedidos() {
+        connectToDB();
+        String truncateTableSQL = "TRUNCATE TABLE Pedidos_has_Doces";
+
+        try {
+            st = con.createStatement();
+            st.executeUpdate(truncateTableSQL);
+            sucesso = true;
+        } catch (SQLException e) {
+            System.out.println("Erro: " + e.getMessage());
+            sucesso = false;
+        } finally {
+            try {
+                st.close();
+                con.close();
+            } catch (SQLException e) {
+                System.out.println("Erro: " + e.getMessage());
+            }
+        }
     }
 }

@@ -2,10 +2,10 @@ package Model;
 
 public class PedidosModel {
 
-    String endereco, cpf;
-    int id;
-    public PedidosModel( int Pedidos_idPedidos, String Clientes_CPF, String Clientes_Endereços_Endereco) {
-        this.endereco = Clientes_Endereços_Endereco;
+    private String endereco, cpf;
+    private int id;
+    public PedidosModel( int Pedidos_idPedidos, String Clientes_CPF, String Clientes_Enderecos_Endereco) {
+        this.endereco = Clientes_Enderecos_Endereco;
         this.cpf = Clientes_CPF;
         this.id = Pedidos_idPedidos;
     }
